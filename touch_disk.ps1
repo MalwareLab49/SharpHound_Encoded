@@ -14,10 +14,11 @@ $executablePath = "$env:TEMP\decoded_executable.exe"
 [System.IO.File]::WriteAllBytes($executablePath, $binaryContent)
 
 # Get the current working directory
-$currentDirectory = (Get-Location).Path
+#$outputDirectory = (Get-Location).Path
+$outputDirectory = "C:\temp\2exfil"    # Outputting to specific directoy
 
 # Define the arguments required by the executable
-$arguments = "-c All -o $currentDirectory"
+$arguments = "-c All --outputdirectory $outputDirectory"
 
 # Reflectively load and execute the executable with the arguments
 # Note: This approach uses the "Run" method to execute the executable
